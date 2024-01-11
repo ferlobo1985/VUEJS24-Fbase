@@ -14,10 +14,10 @@
           <li class="nav-item">
             <router-link to="/" class="nav-link">Home</router-link>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" v-if="!isAuth">
             <router-link to="/users/register" class="nav-link">Register</router-link>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" v-if="isAuth">
             <p
               role="button"
               class="nav-link"
@@ -26,7 +26,7 @@
               Logout
             </p>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" v-if="isAuth">
             <router-link to="/admin/add_article" class="nav-link">Add</router-link>
           </li>
         </ul>
@@ -36,7 +36,16 @@
 
 <script setup>
   import { AUTH } from '@/firebase/configs';
-  import { signOut } from 'firebase/auth';
+  import { signOut, onAuthStateChanged } from 'firebase/auth';
+  import { ref } from 'vue';
+
+  const isAuth = ref(AUTH.currentUser);
+
+  onAuthStateChanged(AUTH,(user)=>{
+    console.log(user);
+    isAuth.value = user;
+  })
+
 
   const handleSignOut = () =>{
     signOut(AUTH)
